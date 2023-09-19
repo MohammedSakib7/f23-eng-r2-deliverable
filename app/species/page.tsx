@@ -17,7 +17,9 @@ export default async function SpeciesList() {
     redirect("/");
   }
 
-  const { data: species } = await supabase.from("species").select("*");
+  // Deleting and updating species restructures rows on supabase table and consequently the species cards.
+  // Ordering by id keeps the cards from moving out of place after editing
+  const { data: species } = await supabase.from("species").select("*").order("id");
 
   return (
     <>
@@ -27,7 +29,8 @@ export default async function SpeciesList() {
       </div>
       <Separator className="my-4" />
       <div className="flex flex-wrap justify-center">
-        {species?.map((species) => <SpeciesCard key={species.id} {...species} />)}
+        {/* Pass in the userId to the species card in order to only allow a certain feature for certain users */}
+        {species?.map((species) => <SpeciesCard key={species.id} species={species} userId={session.user.id}/>)}
       </div>
     </>
   );
